@@ -238,6 +238,10 @@ R | Mirror reference window.
 T | Mirror output window.
 L | Reload avatars.
 I | Show FPS
+P | Freeze video stream
+M | Toggle video recording
+N | Loop video recording
+B | Rock video recording
 ESC | Quit
 
 ## Driving your avatar
