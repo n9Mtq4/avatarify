@@ -111,6 +111,10 @@ def print_help():
     info('Q: Get random avatar')
     info('X: Calibrate face pose')
     info('I: Show FPS')
+    info('P: Freeze video stream')
+    info('M: Toggle video recording')
+    info('N: Loop video recording')
+    info('B: Rock video recording')
     info('ESC: Quit')
     info('\nFull key list: https://github.com/alievk/avatarify#controls')
     info('\n\n')
@@ -243,6 +247,16 @@ if __name__ == "__main__":
     output_flip = False
     find_keyframe = False
     is_calibrated = False
+
+    freeze = False
+    frozen_frame = None
+
+    play_loop = False
+    play_rock = False
+    record_loop = False
+    loop_frames = []
+    loop_frame_idx = 0
+    rock_frame_delta = 1
 
     fps_hist = []
     fps = 0
@@ -387,6 +401,24 @@ if __name__ == "__main__":
                 cur_ava = min(key - 49, len(avatars) - 1)
                 passthrough = False
                 change_avatar(predictor, avatars[cur_ava])
+            elif key == ord('p'):
+                freeze = not freeze
+                if freeze:
+                    frozen_frame = out
+            elif key == ord('n') and (not play_rock):
+                play_loop = not play_loop
+                if play_loop:
+                    loop_frame_idx = 0
+            elif key == ord('b') and (not play_loop):
+                play_rock = not play_rock
+                if play_rock:
+                    loop_frame_idx = 0
+                    rock_frame_delta = 1
+            elif key == ord('m'):
+                record_loop = not record_loop
+                if record_loop:
+                    loop_frames = []
+                    loop_frame_idx = 0
             elif key == 48:
                 passthrough = not passthrough
             elif key != -1:
@@ -419,6 +451,29 @@ if __name__ == "__main__":
 
             if not opt.hide_rect:
                 draw_rect(preview_frame)
+
+            if freeze:
+                out = frozen_frame
+                cv2.putText(preview_frame, 'frozen', (10, 220), 0, 0.5 * IMG_SIZE / 256, (255, 255, 255), 1)
+
+            if record_loop:
+                loop_frames.append(out)
+                cv2.putText(preview_frame, 'recording', (10, 220), 0, 0.5 * IMG_SIZE / 256, (255, 255, 255), 1)
+
+            if play_loop and len(loop_frames) > 0:
+                cv2.putText(preview_frame, 'looping', (10, 220), 0, 0.5 * IMG_SIZE / 256, (255, 255, 255), 1)
+                out = loop_frames[loop_frame_idx]
+                loop_frame_idx += 1
+                loop_frame_idx %= len(loop_frames)
+
+            if play_rock and len(loop_frames) > 0:
+                cv2.putText(preview_frame, 'rocking', (10, 220), 0, 0.5 * IMG_SIZE / 256, (255, 255, 255), 1)
+                out = loop_frames[loop_frame_idx]
+                loop_frame_idx += rock_frame_delta
+                if loop_frame_idx >= len(loop_frames) - 1:
+                    rock_frame_delta = -1
+                elif loop_frame_idx <= 0:
+                    rock_frame_delta = 1
 
             cv2.imshow('cam', preview_frame[..., ::-1])
 
