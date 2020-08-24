@@ -125,6 +125,8 @@ def crop(img, p=0.7, offset_x=0, offset_y=0):
     r += offset_x
     u += offset_y
     d += offset_y
+    l = max(0, l)
+    u = max(0, u)
 
     return img[u:d, l:r], (l,r,u,d,w,h)
 
