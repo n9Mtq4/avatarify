@@ -457,17 +457,20 @@ if __name__ == "__main__":
                 cv2.putText(preview_frame, 'frozen', (10, 220), 0, 0.5 * IMG_SIZE / 256, (255, 255, 255), 1)
 
             if record_loop:
+                textw, _ = cv2.getTextSize('recording', 0, 0.5 * IMG_SIZE / 256, 1)[0]
+                cv2.putText(preview_frame, 'recording', (IMG_SIZE - textw - 10, 20), 0, 0.5 * IMG_SIZE / 256, (255, 255, 255), 1)
                 loop_frames.append(out)
-                cv2.putText(preview_frame, 'recording', (10, 220), 0, 0.5 * IMG_SIZE / 256, (255, 255, 255), 1)
 
             if play_loop and len(loop_frames) > 0:
-                cv2.putText(preview_frame, 'looping', (10, 220), 0, 0.5 * IMG_SIZE / 256, (255, 255, 255), 1)
+                textw, _ = cv2.getTextSize('looping', 0, 0.5 * IMG_SIZE / 256, 1)[0]
+                cv2.putText(preview_frame, 'looping', (IMG_SIZE - textw - 10, 20), 0, 0.5 * IMG_SIZE / 256, (255, 255, 255), 1)
                 out = loop_frames[loop_frame_idx]
                 loop_frame_idx += 1
                 loop_frame_idx %= len(loop_frames)
 
             if play_rock and len(loop_frames) > 0:
-                cv2.putText(preview_frame, 'rocking', (10, 220), 0, 0.5 * IMG_SIZE / 256, (255, 255, 255), 1)
+                textw, _ = cv2.getTextSize('rocking', 0, 0.5 * IMG_SIZE / 256, 1)[0]
+                cv2.putText(preview_frame, 'rocking', (IMG_SIZE - textw - 10, 20), 0, 0.5 * IMG_SIZE / 256, (255, 255, 255), 1)
                 out = loop_frames[loop_frame_idx]
                 loop_frame_idx += rock_frame_delta
                 if loop_frame_idx >= len(loop_frames) - 1:
